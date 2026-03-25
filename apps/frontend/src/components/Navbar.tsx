@@ -8,6 +8,9 @@ import { Button } from '@/components/ui/Button'
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
+ 
+  // add this helper
+  const isActive = (path: string) => location.pathname === path;
   const navigationItems = [
     { label: 'Explore', href: '/explore' },
     { label: 'Create', href: '/mint' },
