@@ -148,7 +148,13 @@ export function ProfilePage() {
             )}
 
             {activeTab === 'favorites' && (
-              <EmptyState type="no-favorites" />
+              <div className="flex items-center justify-center py-12">
+                <div className="text-center">
+                  <Heart className="h-12 w-12 text-secondary-300 mx-auto mb-4" />
+                  <p className="text-secondary-600 font-medium">No favorites yet</p>
+                  <p className="text-secondary-500 text-sm">Like artworks to save them here</p>
+                </div>
+              </div>
             )}
           </div>
         </div>

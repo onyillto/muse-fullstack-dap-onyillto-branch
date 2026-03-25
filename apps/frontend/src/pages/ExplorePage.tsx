@@ -6,6 +6,7 @@ import { Search, Filter } from 'lucide-react'
 export function ExplorePage() {
   const [filters, setFilters] = useState<ArtworksFilters>({})
   const [searchTerm, setSearchTerm] = useState('')
+  const [isFilteringLoading, setIsFilteringLoading] = useState(false)
 
   const {
     data,
@@ -28,6 +29,16 @@ export function ExplorePage() {
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
+    // Trigger loading state to show feedback
+    setIsFilteringLoading(true)
+    setTimeout(() => setIsFilteringLoading(false), 500)
+  }
+
+  const handleFilterChange = (category: string) => {
+    setIsFilteringLoading(true)
+    setFilters(category === 'All' ? {} : { category })
+    // Reset filtering state after a brief moment to show skeleton loaders
+    setTimeout(() => setIsFilteringLoading(false), 300)
   }
 
   return (
@@ -37,21 +48,38 @@ export function ExplorePage() {
         
         <div className="mobile-container mb-8">
           <form onSubmit={handleSearch} className="flex gap-2 mb-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary-500" />
-              <input
-                type="text"
+            <div cl
+              type="submit"
+              variant="primary"
+              size="md"
+              className="hidden sm:block"
+              loading={isFilteringLoading}
+              disabled={isFilteringLoading}
+            >
+              Search
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="sm:hidden"
+              aria-label="Filters"
+              loading={isFilteringLoading}
+              disabled={isFilteringLoading}
+            
                 placeholder="Search artworks, creators..."
                 className="input pl-10"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <Button type="submit" variant="primary" size="md" className="hidden sm:block">
-              Search
-            </Button>
-            <Button type="button" variant="outline" size="sm" className="sm:hidden" aria-label="Filters">
-              <Filter className="h-4 w-4" />
+                onChange={(e) =handleFilterChange(category)}
+                variant={(
+                  filters.category === category || (!filters.category && category === 'All')
+                    ? 'primary'
+                    : 'outline'
+                )}
+                size="sm"
+                className="whitespace-nowrap rounded-full"
+                disabled={isFilteringLoading}
+                loading={isFilteringLoading && (filters.category === category || (!filters.category && category === 'All'))}
             </Button>
           </form>
           

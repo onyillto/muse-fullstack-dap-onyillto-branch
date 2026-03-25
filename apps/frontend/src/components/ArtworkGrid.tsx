@@ -60,6 +60,14 @@ export function ArtworkGrid({
 
   return (
     <>
+      {/* Loading status indicator for filter changes */}
+      {isLoading && artworks.length > 0 && (
+        <div className="mb-6 p-3 rounded-lg bg-primary-50 border border-primary-200 flex items-center space-x-2">
+          <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary-600 border-t-transparent" />
+          <span className="text-sm text-primary-700 font-medium">Updating results...</span>
+        </div>
+      )}
+
       <Grid responsive gap="md">
         {artworks.map((artwork) => (
           <ArtworkCard
