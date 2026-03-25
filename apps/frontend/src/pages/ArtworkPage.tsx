@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { useArtworkMetadata } from '@/hooks/useMetadata'
 import { MetaTags } from '@/components/MetaTags'
+import { Button } from '@/components/ui/Button'
 
 export function ArtworkPage() {
   const { id } = useParams<{ id: string }>()
@@ -109,16 +110,18 @@ export function ArtworkPage() {
                             alert('Link copied to clipboard!')
                           }
                         }}
-                        className="btn-primary text-mobile-sm px-4 py-2 touch-manipulation"
+                        variant="primary"
+                        size="sm"
                       >
                         Share
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${artworkData.title} - ${artworkData.description}`)}&url=${encodeURIComponent(artworkData.url)}`, '_blank')}
-                        className="btn-outline text-mobile-sm px-4 py-2 touch-manipulation"
+                        variant="outline"
+                        size="sm"
                       >
                         Tweet
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </div>

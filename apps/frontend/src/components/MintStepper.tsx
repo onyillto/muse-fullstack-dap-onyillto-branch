@@ -394,10 +394,12 @@ export function MintStepper({ onComplete }: StepperProps) {
             </div>
 
             {!walletConnected ? (
-              <button
+              <Button
                 onClick={handleConnectWallet}
                 disabled={isProcessing}
-                className="btn-primary w-full py-3 flex items-center justify-center space-x-2"
+                variant="primary"
+                size="lg"
+                className="w-full flex items-center justify-center space-x-2"
               >
                 {isProcessing ? (
                   <>
@@ -410,7 +412,7 @@ export function MintStepper({ onComplete }: StepperProps) {
                     <span>Connect Wallet</span>
                   </>
                 )}
-              </button>
+              </Button>
             ) : (
               <div className="space-y-4">
                 <div className="flex items-center space-x-2 text-green-600">
@@ -425,24 +427,28 @@ export function MintStepper({ onComplete }: StepperProps) {
                 />
 
                 {transactionStatus === 'idle' && (
-                  <button
+                  <Button
                     onClick={handleSignTransaction}
                     disabled={isProcessing}
-                    className="btn-primary w-full py-3 flex items-center justify-center space-x-2"
+                    variant="primary"
+                    size="lg"
+                    className="w-full flex items-center justify-center space-x-2"
                   >
                     <Sparkles className="h-4 w-4" />
                     <span>Sign & Mint NFT</span>
-                  </button>
+                  </Button>
                 )}
 
                 {isProcessing && transactionStatus === 'idle' && (
-                  <button
+                  <Button
                     disabled
-                    className="btn-primary w-full py-3 flex items-center justify-center space-x-2 opacity-50"
+                    variant="primary"
+                    size="lg"
+                    className="w-full flex items-center justify-center space-x-2 opacity-50"
                   >
                     <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
                     <span>Processing...</span>
-                  </button>
+                  </Button>
                 )}
               </div>
             )}
@@ -509,24 +515,28 @@ export function MintStepper({ onComplete }: StepperProps) {
 
       {/* Navigation */}
       <div className="flex justify-between">
-        <button
+        <Button
           onClick={handlePrevious}
           disabled={currentStep === 1}
-          className="btn-secondary px-6 py-2 flex items-center space-x-2 disabled:opacity-50"
+          variant="secondary"
+          size="md"
+          className="flex items-center space-x-2"
         >
           <ChevronLeft className="h-4 w-4" />
           <span>Previous</span>
-        </button>
+        </Button>
 
         <div className="flex space-x-2">
           {currentStep < 3 && (
-            <button
+            <Button
               onClick={handleNext}
-              className="btn-primary px-6 py-2 flex items-center space-x-2"
+              variant="primary"
+              size="md"
+              className="flex items-center space-x-2"
             >
               <span>Next</span>
               <ChevronRight className="h-4 w-4" />
-            </button>
+            </Button>
           )}
         </div>
       </div>

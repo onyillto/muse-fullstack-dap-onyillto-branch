@@ -47,27 +47,29 @@ export function ExplorePage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <button type="submit" className="btn-primary px-4 hidden sm:block">
+            <Button type="submit" variant="primary" size="md" className="hidden sm:block">
               Search
-            </button>
-            <button type="button" className="btn-outline px-3 sm:hidden" aria-label="Filters">
+            </Button>
+            <Button type="button" variant="outline" size="sm" className="sm:hidden" aria-label="Filters">
               <Filter className="h-4 w-4" />
-            </button>
+            </Button>
           </form>
           
           <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
             {['All', 'Trending', 'New', 'Photography', '3D Render'].map((category) => (
-              <button
+              <Button
                 key={category}
                 onClick={() => setFilters(category === 'All' ? {} : { category })}
-                className={`btn-outline whitespace-nowrap px-4 py-1.5 rounded-full text-sm ${
-                  (filters.category === category || (!filters.category && category === 'All'))
-                    ? 'bg-secondary-900 text-white border-secondary-900'
-                    : ''
-                }`}
+                variant={(
+                  filters.category === category || (!filters.category && category === 'All')
+                    ? 'primary'
+                    : 'outline'
+                )}
+                size="sm"
+                className="whitespace-nowrap rounded-full"
               >
                 {category}
-              </button>
+              </Button>
             ))}
           </div>
         </div>

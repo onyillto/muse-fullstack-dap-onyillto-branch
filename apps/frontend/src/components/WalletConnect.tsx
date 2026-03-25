@@ -52,14 +52,16 @@ export function WalletConnect() {
       {account.isConnected ? (
         <div className="flex items-center space-x-3">
         <div className="relative">
-          <button
+          <Button
             onClick={() => setShowNetworkSwitch(!showNetworkSwitch)}
-            className="btn-outline px-3 py-1 text-sm flex items-center space-x-1"
+            variant="outline"
+            size="sm"
+            className="flex items-center space-x-1"
           >
             <span className="w-2 h-2 rounded-full bg-green-500" />
             <span>{network === 'testnet' ? 'Testnet' : 'Mainnet'}</span>
             <Settings className="h-3 w-3" />
-          </button>
+          </Button>
           
           {showNetworkSwitch && (
             <div className="absolute right-0 mt-2 w-32 bg-white border border-secondary-200 rounded-md shadow-lg z-50">
@@ -98,19 +100,23 @@ export function WalletConnect() {
           </div>
         </div>
         
-        <button
+        <Button
           onClick={handleDisconnect}
-          className="btn-outline p-2"
+          variant="outline"
+          size="sm"
+          className="p-2"
           title="Disconnect wallet"
         >
           <LogOut className="h-4 w-4" />
-        </button>
+        </Button>
       </div>
     ) : (
-      <button
+      <Button
         onClick={handleConnect}
         disabled={isLoading}
-        className="btn-primary flex items-center space-x-2 px-4 py-2"
+        variant="primary"
+        size="md"
+        className="flex items-center space-x-2"
       >
         {isLoading ? (
           <>
@@ -123,7 +129,7 @@ export function WalletConnect() {
             <span>Connect Freighter</span>
           </>
         )}
-      </button>
+      </Button>
     )}
   </div>
   )
