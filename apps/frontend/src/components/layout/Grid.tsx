@@ -40,7 +40,7 @@ export function Grid({
     baseClasses,
     responsive ? responsiveClasses : columnClasses[columns],
     gapClasses[gap],
-    responsive && responsive || 'px-0',
+    !responsive && 'px-0',
     className
   ].filter(Boolean).join(' ')
 
