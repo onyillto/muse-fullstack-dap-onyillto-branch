@@ -1,43 +1,44 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Palette, Menu, X, Plus } from 'lucide-react'
-import { Navigation } from '@/components/composite/Navigation'
-import { WalletConnect } from './WalletConnect'
-import { Button } from '@/components/ui/Button'
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Palette, Menu, X, Plus } from "lucide-react";
+import { Navigation } from "@/components/composite/Navigation";
+import { WalletConnect } from "./WalletConnect";
+import { Button } from "@/components/ui/Button";
 
 export function Navbar() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
- 
-  // add this helper
-  const isActive = (path: string) => location.pathname === path;
   const navigationItems = [
-    { label: 'Explore', href: '/explore' },
-    { label: 'Create', href: '/mint' },
-    { label: 'Profile', href: '/profile' }
-  ]
+    { label: "Explore", href: "/explore" },
+    { label: "Create", href: "/mint" },
+    { label: "Profile", href: "/profile" },
+  ];
 
   const brand = {
-    name: 'Muse',
+    name: "Muse",
     icon: <Palette className="h-8 w-8 text-primary-600" />,
-    href: '/'
-  }
+    href: "/",
+  };
 
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen)
-  }
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   const navActions = (
     <>
       <Link to="/mint">
-        <Button variant="primary" size="md" className="flex items-center space-x-2">
+        <Button
+          variant="primary"
+          size="md"
+          className="flex items-center space-x-2"
+        >
           <Plus className="h-4 w-4" />
           <span>Mint</span>
         </Button>
       </Link>
       <WalletConnect />
     </>
-  )
+  );
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-secondary-200 bg-white/80 backdrop-blur-md">
@@ -83,5 +84,5 @@ export function Navbar() {
         </div>
       )}
     </nav>
-  )
+  );
 }

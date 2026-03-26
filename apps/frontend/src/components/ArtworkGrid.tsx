@@ -1,25 +1,28 @@
-import { useEffect } from 'react'
-import { Artwork } from '@/services/artworkService'
-import { useIntersectionObserver } from '@/hooks/useIntersectionObserver'
-import { ArtworkCard, type ArtworkCardProps } from '@/components/artwork/ArtworkCard'
-import { Grid } from '@/components/layout/Grid'
-import { LoadingCard } from '@/components/ui/Loading'
-import { EmptyState } from './EmptyState'
+import { useEffect } from "react";
+import { Artwork } from "@/services/artworkService";
+import { useInView } from "@/hooks/useInView";
+import {
+  ArtworkCard,
+  type ArtworkCardProps,
+} from "@/components/artwork/ArtworkCard";
+import { Grid } from "@/components/layout/Grid";
+import { LoadingCard } from "@/components/ui/Loading";
+import { EmptyState } from "./EmptyState";
 
 interface ArtworkGridProps {
-  artworks: Artwork[]
-  isLoading: boolean
-  hasNextPage: boolean
-  isFetchingNextPage: boolean
-  onLoadMore: () => void
-  onPurchase?: (artwork: Artwork) => void
-  onView?: (artwork: Artwork) => void
-  onClearFilters?: () => void
-  hasFilters?: boolean
-  cardVariant?: ArtworkCardProps['variant']
-  showPrice?: boolean
-  showCreator?: boolean
-  loadingCount?: number
+  artworks: Artwork[];
+  isLoading: boolean;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+  onLoadMore: () => void;
+  onPurchase?: (artwork: Artwork) => void;
+  onView?: (artwork: Artwork) => void;
+  onClearFilters?: () => void;
+  hasFilters?: boolean;
+  cardVariant?: ArtworkCardProps["variant"];
+  showPrice?: boolean;
+  showCreator?: boolean;
+  loadingCount?: number;
 }
 
 export function ArtworkGrid({
@@ -32,30 +35,30 @@ export function ArtworkGrid({
   onView,
   onClearFilters,
   hasFilters = false,
-  cardVariant = 'default',
+  cardVariant = "default",
   showPrice = true,
   showCreator = false,
-  loadingCount = 8
+  loadingCount = 8,
 }: ArtworkGridProps) {
-  const loadMoreRef = useIntersectionObserver({
+  const { ref: loadMoreRef } = useInView({
     onIntersect: onLoadMore,
-    enabled: hasNextPage && !isFetchingNextPage,
-    rootMargin: '200px',
-  })
+    skip: !hasNextPage || isFetchingNextPage,
+    rootMargin: "200px",
+  });
 
   // Show skeleton on initial load
   if (isLoading && artworks.length === 0) {
-    return <LoadingCard count={loadingCount} variant="artwork" />
+    return <LoadingCard count={loadingCount} variant="artwork" />;
   }
 
   // Show empty state when no artworks
   if (!isLoading && artworks.length === 0) {
     return (
       <EmptyState
-        type={hasFilters ? 'no-results' : 'no-artworks'}
+        type={hasFilters ? "no-results" : "no-artworks"}
         onClearFilters={onClearFilters}
       />
-    )
+    );
   }
 
   return (
@@ -89,5 +92,5 @@ export function ArtworkGrid({
         </div>
       )}
     </>
-  )
+  );
 }

@@ -39,7 +39,7 @@ interface StellarContextType {
     method: string,
     params?: any[]
   ) => any;
-  refreshBalance: () => Promise<void>;
+  refreshBalance: (explicitAddress?: string) => Promise<void>;
   setNetwork: (network: "testnet" | "mainnet") => void;
 }
 
@@ -73,6 +73,32 @@ export function StellarProvider({ children }: { children: ReactNode }) {
     [network]
   );
 
+  const refreshBalance = useCallback(
+    async (explicitAddress?: string) => {
+      const address = explicitAddress || account.publicKey;
+
+      if (!address) {
+        return;
+      }
+
+      try {
+        const accountObj = await horizonServer.loadAccount(address);
+        const balance =
+          accountObj.balances.find((b: any) => b.asset_type === "native")
+            ?.balance || "0";
+
+        setAccount((prev: StellarAccount) => ({
+          ...prev,
+          balance,
+        }));
+      } catch (error) {
+        const appError = ErrorHandler.handle(error);
+        console.error("Failed to refresh balance:", appError.userMessage);
+      }
+    },
+    [account.publicKey, horizonServer]
+  );
+
   const connectWallet = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -84,23 +110,8 @@ export function StellarProvider({ children }: { children: ReactNode }) {
           isConnected: true,
         });
 
-        // Get account balance
-        try {
-          const accountObj = await horizonServer.loadAccount(publicKey);
-          const balance =
-            accountObj.balances.find((b: any) => b.asset_type === "native")
-              ?.balance || "0";
-
-          setAccount((prev: StellarAccount) => ({
-            ...prev,
-            balance,
-          }));
-        } catch (balanceError) {
-          const appError = ErrorHandler.handle(balanceError);
-          console.error("Failed to fetch balance:", appError.userMessage);
-          // Don't throw error for balance fetch failure, just log it
-          // Could show a non-critical notification here
-        }
+        // Fetch balance immediately using the key we just got
+        await refreshBalance(publicKey);
       } else {
         throw new Error("No public key returned from wallet");
       }
@@ -108,7 +119,6 @@ export function StellarProvider({ children }: { children: ReactNode }) {
       const appError = ErrorHandler.handle(error);
       console.error("Failed to connect wallet:", appError.userMessage);
 
-      // Reset connection state
       setAccount({
         publicKey: "",
         isConnected: false,
@@ -118,7 +128,7 @@ export function StellarProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, [horizonServer]);
+  }, [refreshBalance]);
 
   const disconnectWallet = useCallback(() => {
     setAccount({
@@ -130,7 +140,6 @@ export function StellarProvider({ children }: { children: ReactNode }) {
   const signTransaction = useCallback(
     async (xdr: string, networkPassphrase: string): Promise<string> => {
       try {
-        // Validate inputs
         if (!xdr || xdr.trim() === "") {
           throw new Error("Transaction XDR is required");
         }
@@ -162,7 +171,6 @@ export function StellarProvider({ children }: { children: ReactNode }) {
       transaction: StellarSdk.Transaction
     ): Promise<StellarTransaction> => {
       try {
-        // Validate transaction
         if (!transaction) {
           throw new Error("Transaction is required");
         }
@@ -172,13 +180,11 @@ export function StellarProvider({ children }: { children: ReactNode }) {
             ? StellarSdk.Networks.TESTNET
             : StellarSdk.Networks.PUBLIC;
 
-        // Sign the transaction
         const signedXdr = await signTransaction(
           transaction.toXDR(),
           networkPassphrase
         );
 
-        // Submit the transaction
         const signedTransaction = StellarSdk.TransactionBuilder.fromXDR(
           signedXdr,
           networkPassphrase
@@ -187,7 +193,6 @@ export function StellarProvider({ children }: { children: ReactNode }) {
         const result = await server.sendTransaction(signedTransaction);
 
         if (result.status === "PENDING") {
-          // Wait for transaction confirmation with timeout
           try {
             await Promise.race([
               server.getTransaction(result.hash),
@@ -240,32 +245,7 @@ export function StellarProvider({ children }: { children: ReactNode }) {
     []
   );
 
-  const refreshBalance = useCallback(async () => {
-    if (!account.isConnected || !account.publicKey) {
-      const error = ErrorHandler.handle(new Error("Wallet not connected"));
-      console.warn("Cannot refresh balance:", error.userMessage);
-      return;
-    }
-
-    try {
-      const accountObj = await horizonServer.loadAccount(account.publicKey);
-      const balance =
-        accountObj.balances.find((b: any) => b.asset_type === "native")
-          ?.balance || "0";
-
-      setAccount((prev: StellarAccount) => ({
-        ...prev,
-        balance,
-      }));
-    } catch (error) {
-      const appError = ErrorHandler.handle(error);
-      console.error("Failed to refresh balance:", appError.userMessage);
-      // Could trigger a notification here for the user
-    }
-  }, [account.isConnected, account.publicKey, horizonServer]);
-
   useEffect(() => {
-    // Check if wallet is already connected
     const checkConnection = async () => {
       try {
         const publicKey = await freighterApi.getPublicKey();
@@ -274,7 +254,7 @@ export function StellarProvider({ children }: { children: ReactNode }) {
             publicKey,
             isConnected: true,
           });
-          refreshBalance();
+          await refreshBalance(publicKey);
         }
       } catch (error) {
         // Wallet not connected
